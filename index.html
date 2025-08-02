@@ -99,11 +99,16 @@
       const msg = chatInput.value.trim();
       if (msg !== '') {
         const msgDiv = document.createElement('div');
-        msgDiv.textContent = msg;
+        msgDiv.innerHTML = formatMessage(msg);
         chatBox.appendChild(msgDiv);
         chatInput.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
       }
+    }
+
+    function formatMessage(message) {
+      const lines = message.split(/(?<=\.)\s+/).map(line => line.trim()).filter(Boolean);
+      return lines.map(line => `<p>${line}</p><hr style="border-color:#00ffcc; opacity:0.3;">`).join('');
     }
 
     chatInput.addEventListener('keydown', function (e) {
