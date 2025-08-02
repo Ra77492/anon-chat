@@ -1,43 +1,121 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anonymous Chat</title>
+  <style>
+    @keyframes gradientRotate {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #ff0080, #24243e);
+      background-size: 400% 400%;
+      animation: gradientRotate 15s ease infinite;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 90%;
+      max-width: 600px;
+      height: 80vh;
+      background: linear-gradient(to bottom right, #2193b0, #6dd5ed, #f7797d);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .chat-box {
+      flex: 1;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-y: auto;
+      color: #00ffcc;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .input-box {
+      display: flex;
+      gap: 10px;
+    }
+    .input-box input {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      outline: none;
+      font-size: 1rem;
+    }
+    .input-box button {
+      padding: 0.7rem 1.2rem;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .input-box button:hover {
+      background: #00e6b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box">
+      <!-- Chat messages will appear here -->
+    </div>
+    <div class="input-box">
+      <input type="text" id="chat-input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    function sendMessage() {
+      const msg = chatInput.value.trim();
+      if (msg !== '') {
+        const msgDiv = document.createElement('div');
+        msgDiv.innerHTML = formatMessage(msg);
+        chatBox.appendChild(msgDiv);
+        chatInput.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    function formatMessage(message) {
+      const lines = message.split(/(?<=\.)\s+/).map(line => line.trim()).filter(Boolean);
+      return lines.map(line => `<p>${line}</p><hr style="border-color:#00ffcc; opacity:0.3;">`).join('');
+    }
 
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    chatInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
